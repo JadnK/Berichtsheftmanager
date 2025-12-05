@@ -1,0 +1,48 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+// Looking for ways to speed up your queries, or scale easily with your serverless or edge functions?
+// Try Prisma Accelerate: https://pris.ly/cli/accelerate-init
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "sqlite"
+  url      = env("DATABASE_URL")
+}
+
+model Apprentice {
+  id        String   @id @default(cuid())
+  name      String
+  email     String   @unique
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+  
+  reports   WeeklyReport[]
+}
+
+model WeeklyReport {
+  id           String      @id @default(cuid())
+  weekNumber   Int?        // Altes Feld - wird entfernt, aber erstmal behalten für Migration
+  year         Int?        // Altes Feld - wird entfernt, aber erstmal behalten für Migration
+  title        String?     // Altes Feld - wird entfernt, aber erstmal behalten für Migration
+  rawContent   String      // Originalinhalt
+  aiContent    String?     // KI-verbesserter Inhalt
+  status       ReportStatus @default(DRAFT)
+  reportDate   DateTime    // Neues Feld: Datum des Berichts
+  startDate    DateTime?   // Startdatum für automatische Berechnung
+  createdAt    DateTime    @default(now())
+  updatedAt    DateTime    @updatedAt
+  
+  apprenticeId String
+  apprentice   Apprentice  @relation(fields: [apprenticeId], references: [id], onDelete: Cascade)
+  
+  @@unique([apprenticeId, reportDate])
+}
+
+enum ReportStatus {
+  DRAFT      // in Bearbeitung
+  COMPLETED  // fertig
+}
