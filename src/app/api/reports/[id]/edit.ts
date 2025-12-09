@@ -8,7 +8,7 @@ export async function PATCH(
   try {
     const { id } = await params
     const body = await request.json()
-    const { reportDate, rawContent } = body
+    const { reportDate, rawContent,  } = body
 
     if (!reportDate || !rawContent) {
       return NextResponse.json(

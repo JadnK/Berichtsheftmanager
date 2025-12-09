@@ -9,7 +9,8 @@ generator client {
 }
 
 datasource db {
-  provider = "mysql"
+  // provider = "mysql"
+  provider = "sqlite"
   url      = env("DATABASE_URL")
 }
 
@@ -33,6 +34,7 @@ model WeeklyReport {
   status       ReportStatus @default(DRAFT)
   reportDate   DateTime    // Neues Feld: Datum des Berichts
   startDate    DateTime?   // Startdatum für automatische Berechnung
+  manuallyEdited Boolean    @default(false) // Manueller Bearbeitungsstatus
   createdAt    DateTime    @default(now())
   updatedAt    DateTime    @updatedAt
   
