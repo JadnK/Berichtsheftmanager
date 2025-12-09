@@ -10,7 +10,6 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs'
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select'
 import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle, DialogTrigger } from '@/components/ui/dialog'
 import { Label } from '@/components/ui/label'
-import { Switch } from '@/components/ui/switch'
 import { Collapsible, CollapsibleContent, CollapsibleTrigger } from '@/components/ui/collapsible'
 import { toast } from '@/hooks/use-toast'
 import { CalendarDays, FileText, Wand2, Search, Plus, Edit, Check, Folder, FolderOpen, ChevronDown, ChevronRight } from 'lucide-react'
@@ -295,6 +294,11 @@ export default function BerichtsheftManager() {
             ? { ...report, status: newStatus as 'DRAFT' | 'COMPLETED' }
             : report
         ))
+        setFilteredReports(filteredReports.map(report => 
+          report.id === reportId 
+            ? { ...report, status: newStatus as 'DRAFT' | 'COMPLETED' }
+            : report
+        ))
         toast({
           title: "Erfolg",
           description: `Status wurde auf ${newStatus === 'COMPLETED' ? 'Fertig' : 'In Bearbeitung'} geändert`
@@ -310,23 +314,26 @@ export default function BerichtsheftManager() {
   }
 
   return (
-    <div className="container mx-auto p-6 max-w-7xl">
-      <div className="flex items-center justify-between mb-8">
-        <div>
-          <h1 className="text-3xl font-bold tracking-tight">Berichtsheft Manager</h1>
-          <p className="text-muted-foreground">
-            Verwalte deine wöchentlichen Berichtshefte und verbessere sie mit KI
-          </p>
-        </div>
-        <div className="flex items-center gap-4">
-          <Dialog open={isCreateDialogOpen} onOpenChange={setIsCreateDialogOpen}>
-            <DialogTrigger asChild>
-              <Button>
-                <Plus className="w-4 h-4 mr-2" />
-                Neues Berichtsheft
-              </Button>
-            </DialogTrigger>
-            <DialogContent className="max-w-2xl">
+    <div className="min-h-screen bg-slate-950 dark">
+      <div className="container mx-auto p-6 max-w-7xl">
+        <div className="flex items-center justify-between mb-8">
+          <div>
+            <h1 className="text-4xl font-bold tracking-tight bg-gradient-to-r from-purple-400 to-blue-400 bg-clip-text text-transparent">
+              Berichtsheft Manager
+            </h1>
+            <p className="text-slate-400 mt-2 text-lg">
+              Verwalte deine wöchentlichen Berichtshefte und verbessere sie mit KI
+            </p>
+          </div>
+          <div className="flex items-center gap-4">
+            <Dialog open={isCreateDialogOpen} onOpenChange={setIsCreateDialogOpen}>
+              <DialogTrigger asChild>
+                <Button className="bg-gradient-to-r from-purple-600 to-blue-600 hover:from-purple-700 hover:to-blue-700 text-white shadow-lg hover:shadow-xl transition-all duration-200">
+                  <Plus className="w-4 h-4 mr-2" />
+                  Neues Berichtsheft
+                </Button>
+              </DialogTrigger>
+              <DialogContent className="max-w-2xl">
               <DialogHeader>
                 <DialogTitle>Neues Berichtsheft erstellen</DialogTitle>
                 <DialogDescription>
@@ -360,13 +367,14 @@ export default function BerichtsheftManager() {
                   />
                 </div>
                 <div className="flex gap-2">
-                  <Button onClick={createReport} className="flex-1">
+                  <Button onClick={createReport} className="flex-1 bg-gradient-to-r from-purple-600 to-blue-600 hover:from-purple-700 hover:to-blue-700 text-white">
                     Berichtsheft erstellen
                   </Button>
                   {reports.length > 0 && (
                     <Button 
                       onClick={createNextReport} 
                       variant="outline"
+                      className="border-purple-500/30 text-purple-300 hover:bg-purple-500/10"
                     >
                       Nächster automatisch
                     </Button>
@@ -409,12 +417,13 @@ export default function BerichtsheftManager() {
               />
             </div>
             <div className="flex gap-2">
-              <Button onClick={updateReport} className="flex-1">
+              <Button onClick={updateReport} className="flex-1 bg-gradient-to-r from-purple-600 to-blue-600 hover:from-purple-700 hover:to-blue-700 text-white">
                 Änderungen speichern
               </Button>
               <Button 
                 variant="outline" 
                 onClick={() => setIsEditDialogOpen(false)}
+                className="border-slate-600 text-slate-300 hover:bg-slate-800"
               >
                 Abbrechen
               </Button>
@@ -431,18 +440,18 @@ export default function BerichtsheftManager() {
           
           return (
             <Collapsible key={year} open={isOpen} onOpenChange={() => toggleYear(year)}>
-              <Card className="cursor-pointer hover:shadow-md transition-shadow">
+              <Card className="cursor-pointer hover:shadow-lg transition-all duration-200 border-slate-800 bg-slate-900/80 backdrop-blur-sm">
                 <CollapsibleTrigger className="w-full">
                   <CardHeader className="pb-3">
                     <CardTitle className="flex items-center justify-between text-lg">
                       <div className="flex items-center gap-2">
-                        {isOpen ? <FolderOpen className="w-6 h-6" /> : <Folder className="w-6 h-6" />}
-                        {year}
-                        <Badge variant="secondary" className="ml-2">
+                        {isOpen ? <FolderOpen className="w-6 h-6 text-purple-400" /> : <Folder className="w-6 h-6 text-purple-400" />}
+                        <span className="font-semibold text-slate-200">{year}</span>
+                        <Badge variant="secondary" className="ml-2 bg-purple-500/20 text-purple-300 border-purple-500/30">
                           {yearReports.length} {yearReports.length === 1 ? 'Bericht' : 'Berichte'}
                         </Badge>
                       </div>
-                      {isOpen ? <ChevronDown className="w-5 h-5" /> : <ChevronRight className="w-5 h-5" />}
+                      {isOpen ? <ChevronDown className="w-5 h-5 text-slate-400" /> : <ChevronRight className="w-5 h-5 text-slate-400" />}
                     </CardTitle>
                   </CardHeader>
                 </CollapsibleTrigger>
@@ -458,18 +467,18 @@ export default function BerichtsheftManager() {
                   
                   return (
                     <Collapsible key={yearMonth} open={isMonthOpen} onOpenChange={() => toggleFolder(yearMonth)}>
-                      <Card className="cursor-pointer hover:shadow-md transition-shadow">
+                      <Card className="cursor-pointer hover:shadow-lg transition-all duration-200 border-slate-800 bg-slate-900/70 backdrop-blur-sm">
                         <CollapsibleTrigger className="w-full">
                           <CardHeader className="pb-3">
                             <CardTitle className="flex items-center justify-between text-md">
                               <div className="flex items-center gap-2">
-                                {isMonthOpen ? <FolderOpen className="w-5 h-5" /> : <Folder className="w-5 h-5" />}
-                                {monthName}
-                                <Badge variant="outline" className="ml-2">
+                                {isMonthOpen ? <FolderOpen className="w-5 h-5 text-blue-400" /> : <Folder className="w-5 h-5 text-blue-400" />}
+                                <span className="font-medium text-slate-200">{monthName}</span>
+                                <Badge variant="outline" className="ml-2 border-blue-500/30 text-blue-300">
                                   {monthReports.length} {monthReports.length === 1 ? 'Bericht' : 'Berichte'}
                                 </Badge>
                               </div>
-                              {isMonthOpen ? <ChevronDown className="w-4 h-4" /> : <ChevronRight className="w-4 h-4" />}
+                              {isMonthOpen ? <ChevronDown className="w-4 h-4 text-slate-400" /> : <ChevronRight className="w-4 h-4 text-slate-400" />}
                             </CardTitle>
                           </CardHeader>
                         </CollapsibleTrigger>
@@ -477,84 +486,110 @@ export default function BerichtsheftManager() {
                       
                       <CollapsibleContent className="space-y-4 pl-6">
                         {monthReports.map((report) => (
-                          <Card key={report.id} className="hover:shadow-md transition-shadow">
-                            <CardHeader>
-                              <div className="flex items-center justify-between">
-                                <div>
-                                  <CardTitle className="flex items-center gap-2">
-                                    <FileText className="w-5 h-5" />
-                                    Bericht vom {new Date(report.reportDate).toLocaleDateString('de-DE')}
-                                  </CardTitle>
-                                  <CardDescription>
-                                    Erstellt am {new Date(report.createdAt).toLocaleDateString('de-DE')}
-                                  </CardDescription>
-                                </div>
-                                <div className="flex items-center gap-2">
-                                  <Button 
-                                    onClick={() => openEditDialog(report)}
-                                    variant="outline"
-                                    size="sm"
-                                  >
-                                    <Edit className="w-4 h-4 mr-1" />
-                                    Bearbeiten
-                                  </Button>
-                                  <Badge variant={report.status === 'COMPLETED' ? 'default' : 'secondary'}>
-                                    {report.status === 'COMPLETED' ? 'Fertig' : 'In Bearbeitung'}
-                                  </Badge>
-                                  <Switch
-                                    checked={report.status === 'COMPLETED'}
-                                    onCheckedChange={() => toggleStatus(report.id, report.status)}
-                                  />
-                                </div>
-                              </div>
-                            </CardHeader>
-                            <CardContent>
-                              <Tabs defaultValue="raw" className="w-full">
-                                <TabsList className="grid w-full grid-cols-2">
-                                  <TabsTrigger value="raw">Original</TabsTrigger>
-                                  <TabsTrigger value="ai" disabled={!report.aiContent}>
-                                    KI-verbessert
-                                    {report.aiContent && <Check className="w-4 h-4 ml-2" />}
-                                  </TabsTrigger>
-                                </TabsList>
-                                <TabsContent value="raw" className="mt-4">
-                                  <div className="space-y-4">
-                                    <div className="prose prose-sm max-w-none">
-                                      <p className="whitespace-pre-wrap">{report.rawContent}</p>
-                                    </div>
-                                    {!report.aiContent && (
-                                      <Button 
-                                        onClick={() => improveWithAI(report.id)}
-                                        disabled={isImproving}
-                                        variant="outline"
-                                      >
-                                        <Wand2 className="w-4 h-4 mr-2" />
-                                        {isImproving ? 'Verbessere...' : 'Mit KI verbessern'}
-                                      </Button>
-                                    )}
-                                  </div>
-                                </TabsContent>
-                                <TabsContent value="ai" className="mt-4">
-                                  {report.aiContent && (
-                                    <div className="space-y-4">
-                                      <div className="prose prose-sm max-w-none">
-                                        <p className="whitespace-pre-wrap">{report.aiContent}</p>
+                          <Collapsible key={report.id}>
+                            <Card className="hover:shadow-lg transition-all duration-200 border-slate-800 bg-slate-900">
+                              <CollapsibleTrigger className="w-full">
+                                <CardHeader>
+                                  <div className="flex items-center justify-between">
+                                    <div className="flex items-center gap-3">
+                                      <FileText className="w-5 h-5 text-purple-400" />
+                                      <div>
+                                        <CardTitle className="text-lg text-slate-200">
+                                          Bericht vom {new Date(report.reportDate).toLocaleDateString('de-DE')}
+                                        </CardTitle>
+                                        <CardDescription className="text-slate-400 mt-1">
+                                          Erstellt am {new Date(report.createdAt).toLocaleDateString('de-DE')}
+                                        </CardDescription>
                                       </div>
-                                      <Button 
-                                        onClick={() => improveWithAI(report.id)}
-                                        disabled={isImproving}
+                                    </div>
+                                    <div className="flex items-center gap-2">
+                                      <Badge 
+                                        variant={report.status === 'COMPLETED' ? 'default' : 'secondary'}
+                                        className={report.status === 'COMPLETED' 
+                                          ? 'bg-green-500/20 text-green-300 border-green-500/30' 
+                                          : 'bg-amber-500/20 text-amber-300 border-amber-500/30'}
+                                      >
+                                        {report.status === 'COMPLETED' ? 'Fertig' : 'In Bearbeitung'}
+                                      </Badge>
+                                      <Button
+                                        onClick={(e) => {
+                                          e.stopPropagation()
+                                          toggleStatus(report.id, report.status)
+                                        }}
                                         variant="outline"
                                         size="sm"
+                                        className={report.status === 'COMPLETED' 
+                                          ? 'border-green-500/30 text-green-300 hover:bg-green-500/10' 
+                                          : 'border-amber-500/30 text-amber-300 hover:bg-amber-500/10'}
                                       >
-                                        <Wand2 className="w-4 h-4 mr-2" />
-                                        Neu verbessern
+                                        {report.status === 'COMPLETED' ? 'Fertig' : 'Bearbeiten'}
+                                      </Button>
+                                      <Button 
+                                        onClick={(e) => {
+                                          e.stopPropagation()
+                                          openEditDialog(report)
+                                        }}
+                                        variant="outline"
+                                        size="sm"
+                                        className="border-purple-500/30 text-purple-300 hover:bg-purple-500/10"
+                                      >
+                                        <Edit className="w-4 h-4 mr-1" />
+                                        Bearbeiten
                                       </Button>
                                     </div>
-                                  )}
-                                </TabsContent>
-                              </Tabs>
-                            </CardContent>
-                          </Card>
+                                  </div>
+                                </CardHeader>
+                              </CollapsibleTrigger>
+                              <CollapsibleContent className="px-6 pb-6">
+                                <Tabs defaultValue="raw" className="w-full">
+                                  <TabsList className="grid w-full grid-cols-2 bg-slate-800 border-slate-700">
+                                    <TabsTrigger value="raw" className="data-[state=active]:bg-slate-700 text-slate-300">Original</TabsTrigger>
+                                    <TabsTrigger value="ai" disabled={!report.aiContent} className="data-[state=active]:bg-slate-700 text-slate-300">
+                                      KI-verbessert
+                                      {report.aiContent && <Check className="w-4 h-4 ml-2" />}
+                                    </TabsTrigger>
+                                  </TabsList>
+                                  <TabsContent value="raw" className="mt-4">
+                                    <div className="space-y-4">
+                                      <div className="prose prose-sm max-w-none prose-invert">
+                                        <p className="whitespace-pre-wrap text-slate-300">{report.rawContent}</p>
+                                      </div>
+                                      {!report.aiContent && (
+                                        <Button 
+                                          onClick={() => improveWithAI(report.id)}
+                                          disabled={isImproving}
+                                          variant="outline"
+                                          className="border-blue-500/30 text-blue-300 hover:bg-blue-500/10"
+                                        >
+                                          <Wand2 className="w-4 h-4 mr-2" />
+                                          {isImproving ? 'Verbessere...' : 'Mit KI verbessern'}
+                                        </Button>
+                                      )}
+                                    </div>
+                                  </TabsContent>
+                                  <TabsContent value="ai" className="mt-4">
+                                    {report.aiContent && (
+                                      <div className="space-y-4">
+                                        <div className="prose prose-sm max-w-none prose-invert">
+                                          <p className="whitespace-pre-wrap text-slate-300">{report.aiContent}</p>
+                                        </div>
+                                        <Button 
+                                          onClick={() => improveWithAI(report.id)}
+                                          disabled={isImproving}
+                                          variant="outline"
+                                          size="sm"
+                                          className="border-blue-500/30 text-blue-300 hover:bg-blue-500/10"
+                                        >
+                                          <Wand2 className="w-4 h-4 mr-2" />
+                                          Neu verbessern
+                                        </Button>
+                                      </div>
+                                    )}
+                                  </TabsContent>
+                                </Tabs>
+                              </CollapsibleContent>
+                            </Card>
+                          </Collapsible>
                         ))}
                       </CollapsibleContent>
                     </Collapsible>
@@ -566,18 +601,21 @@ export default function BerichtsheftManager() {
         })}
         
         {filteredReports.length === 0 && (
-          <Card>
+          <Card className="border-slate-800 bg-slate-900/80 backdrop-blur-sm">
             <CardContent className="flex flex-col items-center justify-center py-12">
-              <FileText className="w-12 h-12 text-muted-foreground mb-4" />
-              <h3 className="text-lg font-semibold mb-2">Keine Berichtshefte gefunden</h3>
-              <p className="text-muted-foreground text-center mb-4">
+              <FileText className="w-16 h-16 text-slate-500 mb-6" />
+              <h3 className="text-xl font-semibold mb-3 text-slate-300">Keine Berichtshefte gefunden</h3>
+              <p className="text-slate-400 text-center mb-6 max-w-md">
                 {reports.length === 0 
-                  ? "Erstelle dein erstes Berichtsheft"
+                  ? "Erstelle dein erstes Berichtsheft, um mit der Dokumentation deiner Ausbildung zu beginnen."
                   : "Keine Berichtshefte für die ausgewählten Filter gefunden"
                 }
               </p>
               {reports.length === 0 && (
-                <Button onClick={() => setIsCreateDialogOpen(true)}>
+                <Button 
+                  onClick={() => setIsCreateDialogOpen(true)}
+                  className="bg-gradient-to-r from-purple-600 to-blue-600 hover:from-purple-700 hover:to-blue-700 text-white shadow-lg hover:shadow-xl transition-all duration-200"
+                >
                   <Plus className="w-4 h-4 mr-2" />
                   Erstes Berichtsheft erstellen
                 </Button>
@@ -586,6 +624,7 @@ export default function BerichtsheftManager() {
           </Card>
         )}
       </div>
+    </div>
     </div>
   )
 }
