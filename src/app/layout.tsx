@@ -1,36 +1,46 @@
 import type { Metadata } from "next";
-import { Geist, Geist_Mono } from "next/font/google";
+import { Lexend, JetBrains_Mono } from "next/font/google";
 import "./globals.css";
 import { Toaster } from "@/components/ui/toaster";
 import { ThemeProvider } from "@/components/theme-provider";
 
-const geistSans = Geist({
-  variable: "--font-geist-sans",
+const lexend = Lexend({
+  variable: "--font-lexend",
   subsets: ["latin"],
 });
 
-const geistMono = Geist_Mono({
-  variable: "--font-geist-mono",
+const jetbrainsMono = JetBrains_Mono({
+  variable: "--font-jetbrains-mono",
   subsets: ["latin"],
 });
 
 export const metadata: Metadata = {
-  title: "Berichtsheft Manager - KI-gestützte Berichtshefterstellung",
-  description: "Verwalte deine wöchentlichen Berichtshefte und verbessere sie mit KI-Unterstützung. Perfekt für Azubis und Ausbilder.",
-  keywords: ["Berichtsheft", "Azubi", "KI", "Next.js", "TypeScript", "Tailwind CSS", "Ausbildung"],
+  title: "Berichtsheft Manager - KI-gestutzte Berichtshefterstellung",
+  description:
+    "Verwalte deine wochentlichen Berichtshefte und verbessere sie mit KI-Unterstutzung. Perfekt fur Azubis und Ausbilder.",
+  keywords: [
+    "Berichtsheft",
+    "Azubi",
+    "KI",
+    "TypeScript",
+    "Tailwind CSS",
+    "Ausbildung",
+  ],
   authors: [{ name: "Berichtsheft Manager Team" }],
   icons: {
     icon: "/logo.svg",
   },
   openGraph: {
     title: "Berichtsheft Manager",
-    description: "KI-gestützte Verwaltung von wöchentlichen Berichtsheften für Azubis",
+    description:
+      "KI-gestutzte Verwaltung von wochentlichen Berichtsheften fur Azubis",
     type: "website",
   },
   twitter: {
     card: "summary_large_image",
     title: "Berichtsheft Manager",
-    description: "KI-gestützte Verwaltung von wöchentlichen Berichtsheften für Azubis",
+    description:
+      "KI-gestutzte Verwaltung von wochentlichen Berichtsheften fur Azubis",
   },
 };
 
@@ -40,10 +50,8 @@ export default function RootLayout({
   children: React.ReactNode;
 }>) {
   return (
-    <html lang="de" suppressHydrationWarning>
-      <body
-        className={`${geistSans.variable} ${geistMono.variable} antialiased bg-background text-foreground`}
-      >
+    <html lang="de" className="dark" suppressHydrationWarning>
+      <body className={`${lexend.variable} ${jetbrainsMono.variable} antialiased`}>
         <ThemeProvider
           attribute="class"
           defaultTheme="dark"

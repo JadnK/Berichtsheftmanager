@@ -10,12 +10,13 @@ export async function PATCH(
     const body = await request.json()
     const { status } = body
 
-    if (!status || !['DRAFT', 'COMPLETED'].includes(status)) {
+    if (!status || !['DRAFT', 'SUBMITTED', 'COMPLETED'].includes(status)) {
       return NextResponse.json(
         { error: 'Ungültiger Status' },
         { status: 400 }
       )
     }
+    const normalizedStatus = status === 'COMPLETED' ? 'DRAFT' : status
 
     const report = await db.weeklyReport.findUnique({
       where: { id }
@@ -31,7 +32,7 @@ export async function PATCH(
     const updatedReport = await db.weeklyReport.update({
       where: { id },
       data: {
-        status: status
+        status: normalizedStatus
       }
     })
 
