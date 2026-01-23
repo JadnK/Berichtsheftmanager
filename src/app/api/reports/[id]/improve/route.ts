@@ -12,6 +12,7 @@ export async function POST(
 ) {
   try {
     const { id } = await params
+
     const report = await db.weeklyReport.findUnique({
       where: { id }
     })
@@ -25,103 +26,124 @@ export async function POST(
 
     const completion = await openai.chat.completions.create({
       model: 'gpt-4o-mini',
+      temperature: 0.6,
+      max_tokens: 2000,
       messages: [
         {
           role: 'system',
           content: `
 Du schreibst Wochenberichte für einen Auszubildenden im IT-Bereich.
 
-Deine Aufgabe ist es, aus Stichpunkten oder roh geschriebenem Text einen normalen, sinnvollen Wochenbericht zu machen, so wie ihn ein Azubi tatsächlich im Berichtsheft abgeben würde.
+Ziel:
+Erstelle realistische, natürliche Wochenberichte, so wie sie ein Azubi tatsächlich im Berichtsheft abgibt.
+Der Text muss bodenständig, logisch und unauffällig korrekt sein.
 
-Schreibe:
+Grundstil:
+- Einfach
+- Klar
+- Natürlich
+- Nicht zu formell
+- Nicht zu locker
+- Kein Aufsatz
+- Kein Behördendeutsch
+- Keine Werbung
+- Keine Übertreibungen
 
-einfach
+Sprache:
+- Kurze, verständliche Sätze
+- Sinnvolle Übergänge
+- Keine Füllwörter
+- Keine Wiederholungen
+- Keine erfundenen Inhalte
 
-klar
+Stilregeln:
+- Schreiben mit „Ich“ ist erlaubt
+- Nicht jeder Satz darf mit „Ich“ beginnen
+- Satzanfänge natürlich variieren
+- Keine künstlich komplizierten Formulierungen
 
-logisch
-
-natürlich
-
-nicht zu formell
-
-nicht zu locker
-
-Der Text soll sich lesen wie ein sauber formulierter Ausbildungsnachweis und nicht wie ein Aufsatz, keine Werbung und kein Behördendeutsch.
-
-Wichtige Regeln:
-
-Kurze, verständliche Sätze
-
-Sinnvolle Übergänge zwischen Tätigkeiten
-
-Keine unnötigen Füllwörter
-
-Keine Wiederholungen
-
-Keine erfundenen Inhalte
-
-Keine Übertreibungen
-
-Stil:
-
-Es ist erlaubt, mit „Ich“ zu schreiben
-
-Nicht jeder Satz darf mit „Ich“ beginnen
-
-Satzanfänge variieren, aber nicht künstlich
-
-Schreib so, wie man es wirklich im Berichtsheft erwarten würde
-
-Umgang mit Inhalt:
-
-Kommaseparierte Stichpunkte sind einzelne Tätigkeiten und müssen sinnvoll zu Sätzen verbunden werden
-
-Nichts dazudichten
-
-Nichts interpretieren
-
-Nur das beschreiben, was wirklich genannt wurde
+Umgang mit Eingaben:
+- Kommaseparierte Stichpunkte sind einzelne Tätigkeiten
+- Jede Tätigkeit sinnvoll in Text überführen
+- Nichts dazudichten
+- Nichts interpretieren
+- Nur das beschreiben, was genannt wurde
 
 Berufsschule:
-
-Fächer, Stunden und Reihenfolge beibehalten
-
-Nur Rechtschreibung und Grammatik korrigieren
-
-Keine Umformulierungen
-
-Keine Erweiterungen
-
-Struktur nicht verändern
+- Fächer, Stunden und Reihenfolge exakt beibehalten
+- Keine Umformulierungen
+- Keine Erweiterungen
+- Nur Rechtschreibung und Grammatik korrigieren
+- Struktur unverändert lassen
 
 Arbeit:
-
-Als Fließtext schreiben
-
-Leicht ausschreiben, aber knapp bleiben
-
-Realistisch und bodenständig
+- Immer als Fließtext schreiben
+- Leicht ausschreiben, aber knapp bleiben
+- Realistisch und sachlich
+- Keine Wiederholungen
 
 Form:
-
-Keine Emojis
-
-Keine Sonderzeichen
-
-Keine Erklärungen
-
-Antworte ausschließlich mit dem fertigen Berichtstext
+- Keine Emojis
+- Keine Sonderzeichen
+- Keine Erklärungen
+- Antworte ausschließlich mit dem fertigen Berichtstext
           `.trim()
-
         },
+
+        {
+          role: 'assistant',
+          content: `
+BEISPIEL 1 – ARBEIT
+
+ROH:
+Montag:
+Emails geprüft, Meeting mit Betreuer, Projektantrag bearbeitet
+
+Dienstag:
+Software installiert, Datenbank getestet
+
+FERTIG:
+Am Montag habe ich meine E-Mails überprüft. Anschließend fand ein Meeting mit meinem Betreuer statt, in dem der aktuelle Stand besprochen wurde. Danach arbeitete ich weiter am Projektantrag.
+Am Dienstag installierte ich die benötigte Software und testete die Datenbankverbindung.
+
+---
+
+BEISPIEL 2 – URLAUB / ORGANISATION
+
+ROH:
+Montag:
+Urlaub
+
+Dienstag:
+PC neu eingerichtet, Programme installiert
+
+FERTIG:
+Am Montag hatte ich Urlaub.
+Am Dienstag richtete ich meinen Dienst-PC neu ein und installierte die benötigten Programme.
+
+---
+
+BEISPIEL 3 – BERUFSSCHULE
+
+ROH:
+Montag:
+2h WiKo: Konjunkturzyklen
+4h BFKO: Raspberry Pi Projekt
+2h GK: EU Arbeit
+
+FERTIG:
+Montag:
+2h WiKo: Konjunkturzyklen
+4h BFKO: Raspberry Pi Projekt
+2h GK: EU Arbeit
+          `.trim()
+        },
+
         {
           role: 'user',
           content: report.rawContent
         }
-      ],
-      temperature: 0.7,
-      max_tokens: 2000
+      ]
     })
 
     const improvedContent = completion.choices[0]?.message?.content
