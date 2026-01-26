@@ -84,9 +84,7 @@ FORM
 - Keine Sonderzeichen
 - Keine Erklärungen
 - Antworte ausschließlich mit dem fertigen Berichtstext
-`.trim()
-
-          `.trim()
+ `.trim()
         },
 
         {
